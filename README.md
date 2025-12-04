@@ -18,5 +18,5 @@ Each entry are stored in localStorage and can be edited, deleted, filtered, and 
 - Vite
 
 ## Run locally
-npm install
-npm run dev
+- npm install
+- npm run dev
