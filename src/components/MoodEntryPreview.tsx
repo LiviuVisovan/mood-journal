@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 type JournalEntry = {
   selectedMood: string;
@@ -51,23 +52,30 @@ export default function MoodEntryPreview({
   return (
     <div>
       {entries.length === 0 && <p>No entries yet.</p>}
-      <label>Filter:</label>
+      <label>Filters:</label>
+      <div className="filter-input">
+        <input
+          value={searchfilter}
+          onChange={(e) => setFilter(e.target.value)}
+        ></input>
+      </div>
+      <div className="filter-select">
+        <select value={sortType} onChange={(e) => setSort(e.target.value)}>
+          <option value={"newest"}>newest</option>
+          <option value={"oldest"}>oldest</option>
+          <option value={"mood"}>mood</option>
+        </select>
+      </div>
 
-      <input
-        value={searchfilter}
-        onChange={(e) => setFilter(e.target.value)}
-      ></input>
-      <select value={sortType} onChange={(e) => setSort(e.target.value)}>
-        <option value={"newest"}>newest</option>
-        <option value={"oldest"}>oldest</option>
-        <option value={"mood"}>mood</option>
-      </select>
       {sortedAndFiltered.map((n) => {
         const isediting = editingid === n.id;
         return (
           <div key={n.id} className="entry-card">
-            <p>Your mood is {n.selectedMood}</p>
-            <p>and your note is {n.note}</p>
+            <Link to={`/journal/${n.id}`} className="entry-title">
+              <p>Your mood is {n.selectedMood}</p>
+              <p>and your note is {n.note}</p>
+            </Link>
+
             <p style={{ fontSize: "12px", opacity: 0.7 }}>
               created at: {new Date(n.createdAt).toLocaleString()}
             </p>

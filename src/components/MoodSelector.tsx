@@ -8,17 +8,19 @@ export default function MoodSelector(props: moodSelector) {
   return (
     <div>
       Mood:{" "}
-      <select
-        value={mood}
-        onChange={(e) => {
-          setMood(e.target.value);
-          props.selector(e.target.value);
-        }}
-      >
-        {moodsList.map((mood) => (
-          <option>{mood}</option>
-        ))}
-      </select>
+      <div className="filter-select">
+        <select
+          value={mood}
+          onChange={(e) => {
+            setMood(e.target.value);
+            props.selector(e.target.value);
+          }}
+        >
+          {moodsList.map((mood) => (
+            <option>{mood}</option>
+          ))}
+        </select>
+      </div>
       <p>You chose: {mood}</p>
     </div>
   );

@@ -1,8 +1,10 @@
 import MoodSelector from "./components/MoodSelector";
 import NoteInput from "./components/NoteInput";
 import MoodEntryPreview from "./components/MoodEntryPreview";
+import EntryDetail from "./components/EntryDetail";
 
 import { useState, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 
 type notesType = {
   note: string;
@@ -14,7 +16,19 @@ type notesType = {
 export default function Journal() {
   const [selectedMood, setSelectedMood] = useState("anxious");
   const [note, setNote] = useState("");
+
   const STORAGE_KEY = "mood-entries";
+
+  function calculateStats(empresscutetoday: notesType[]) {
+    const moodStats: Record<string, number> = {};
+
+    const entries = empresscutetoday;
+    for (const entry of entries) {
+      if (!moodStats[entry.selectedMood]) moodStats[entry.selectedMood] = 1;
+      else moodStats[entry.selectedMood] = moodStats[entry.selectedMood] + 1;
+    }
+    return moodStats;
+  }
 
   const [notes, setNotes] = useState<notesType[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -25,6 +39,7 @@ export default function Journal() {
       return [];
     }
   });
+  const stats = calculateStats(notes);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
@@ -74,11 +89,40 @@ export default function Journal() {
         </div>
       </section>
       <section className="journal-section">
-        <MoodEntryPreview
-          entries={notes}
-          handleDelete={handleDelete}
-          handleEdit={handleEdit}
-        />
+        <h2 className="section-title">Stats</h2>
+        <p>Total entries: {notes.length}</p>
+
+        {notes.length === 0 ? (
+          <p className="muted">
+            No entries yet. Start by adding your first mood.
+          </p>
+        ) : (
+          <div className="stats-list">
+            {Object.keys(stats).map((mood) => (
+              <span key={mood} className="stats-pill">
+                {mood}: {stats[mood]}
+              </span>
+            ))}
+          </div>
+        )}
+      </section>
+      <section className="journal-section">
+        <Routes>
+          <Route
+            index
+            element={
+              <MoodEntryPreview
+                entries={notes}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+              />
+            }
+          />
+          <Route
+            path=":id"
+            element={<EntryDetail entries={notes} onDelete={handleDelete} />}
+          />
+        </Routes>
       </section>
     </div>
   );
